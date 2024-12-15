@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da605b90defd64e4594854da37544c39, type: 3}
+  m_Name: PastelFresa
+  m_EditorClassIdentifier: 
+  nombrePedido: PastelFresa
+  colorLuz: {r: 1, g: 0.6179246, b: 0.86910063, a: 0}
