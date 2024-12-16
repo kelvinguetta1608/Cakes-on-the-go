@@ -61,27 +61,12 @@ public class GeneradorDePedidos : MonoBehaviour
     {
         if (clienteActual != null)
         {
-            int posicionLiberada = -1;
-            for (int i = 0; i < posicionesClientes.Length; i++)
-            {
-                if (posicionesClientes[i].position == clienteActual.transform.position)
-                {
-                    posicionLiberada = i;
-                    break;
-                }
-            }
-
-            if (posicionLiberada >= 0)
-            {
-                posicionesLibres.Add(posicionLiberada); // Liberar posición
-                Debug.Log($"Posición liberada: {posicionLiberada}");
-            }
-
-            Destroy(clienteActual); // Destruir el cliente después de entregar el pedido
-            clienteActual = null;   // Limpiar la referencia
+            Destroy(clienteActual);  // Destruir el cliente después de entregar el pedido
         }
 
-        GenerarNuevoPedido(); // Generar un nuevo cliente y pedido
+        // Liberar la posición y generar un nuevo pedido
+        int posicionLiberada = System.Array.IndexOf(posicionesClientes, clienteActual.transform);
+        posicionesLibres.Add(posicionLiberada);
+        GenerarNuevoPedido();  // Generar un nuevo pedido y cliente
     }
-
 }

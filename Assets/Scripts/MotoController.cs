@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,25 +17,36 @@ public class MotoController : MonoBehaviour, PlayerInputActions.IPlayerActions, 
     private float currentSteerAngle = 0f;
     private float currentSpeed = 0f;
     private float turnSpeed = 5f;
+    public GameObject objetoActivable;
 
     [SerializeField] private float wheelRadius = 0.5f;
 
     private PlayerInputActions playerInputActions;
 
-    // Agregar un campo para almacenar el pedido asignado
+    // Variables de interacción
+    public MotoController motoOponente; // Referencia a la moto opuesta
+    private bool puedeInteractuar = true; // Controla si esta moto puede interactuar
     public Pedido pedidoAsignado;
+
+    // Nueva variable para invertir controles
+    private bool controlesInvertidos = false;
 
     private void Awake()
     {
         // Inicializar el sistema de entradas
         playerInputActions = new PlayerInputActions();
-        playerInputActions.Player.SetCallbacks(this); // Se asigna la interfaz IPlayerActions
-        playerInputActions.Player2.SetCallbacks(this); // Se asigna la interfaz IPlayer2Actions
+        playerInputActions.Player.SetCallbacks(this);
+        playerInputActions.Player2.SetCallbacks(this);
+    }
+
+    public void AsignarPedido(Pedido pedido)
+    {
+        pedidoAsignado = pedido;
+        Debug.Log("Pedido asignado: " + pedido.nombrePedido);
     }
 
     private void OnEnable()
     {
-        // Habilitar el mapa de entrada correspondiente según el tag del objeto
         if (CompareTag("Player"))
         {
             playerInputActions.Player.Enable();
@@ -47,7 +59,6 @@ public class MotoController : MonoBehaviour, PlayerInputActions.IPlayerActions, 
 
     private void OnDisable()
     {
-        // Deshabilitar ambos mapas cuando se desactiva
         playerInputActions.Player.Disable();
         playerInputActions.Player2.Disable();
     }
@@ -139,24 +150,59 @@ public class MotoController : MonoBehaviour, PlayerInputActions.IPlayerActions, 
         }
     }
 
-    // Método para asignar el pedido
-    public void AsignarPedido(Pedido pedido)
-    {
-        pedidoAsignado = pedido;
-        Debug.Log("Pedido asignado: " + pedido.nombrePedido);
-    }
-
     public void OnMove(InputAction.CallbackContext context)
     {
-        movementInput = context.ReadValue<Vector2>();
+        // Ajusta la entrada según si los controles están invertidos
+        Vector2 input = context.ReadValue<Vector2>();
+        movementInput = controlesInvertidos ? new Vector2(-input.x, -input.y) : input;
     }
 
     public void OnJump(InputAction.CallbackContext context)
     {
         // Acción no utilizada
     }
+
     public void OnInteract(InputAction.CallbackContext context)
     {
-        // Acción no utilizada o implementada según sea necesario
+        if (context.started && puedeInteractuar && motoOponente != null)
+        {
+            StartCoroutine(AfectarOponente());
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Pastel"))
+        {
+            if (objetoActivable != null)
+            {
+                objetoActivable.SetActive(true);
+                Debug.Log("Objeto activado al entrar en contacto con Pastel.");
+            }
+        }
+    }
+
+    private IEnumerator AfectarOponente()
+    {
+        // Desactiva la capacidad de interactuar temporalmente
+        puedeInteractuar = false;
+
+        // Reduce la aceleración del oponente y activa controles invertidos
+        float aceleracionOriginal = motoOponente.acceleration;
+        motoOponente.acceleration *= 0.5f;
+        motoOponente.controlesInvertidos = true;
+
+        Debug.Log("Efecto aplicado: velocidad reducida y controles invertidos.");
+
+        // Espera 5 segundos antes de restaurar los efectos
+        yield return new WaitForSeconds(8f);
+
+        motoOponente.acceleration = aceleracionOriginal;
+        motoOponente.controlesInvertidos = false;
+        Debug.Log("Efectos del oponente restaurados.");
+
+        // Espera 10 segundos antes de permitir otra interacción
+        yield return new WaitForSeconds(15f);
+        puedeInteractuar = true;
     }
 }

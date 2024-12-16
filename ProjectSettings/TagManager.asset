@@ -6,6 +6,7 @@ TagManager:
   tags:
   - DeliveryPoint
   - Player2
+  - Pastel
   layers:
   - Default
   - TransparentFX

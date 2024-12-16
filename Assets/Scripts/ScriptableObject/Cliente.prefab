@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 473d6bac2284b804b9e28a7906f308ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanciaRaycast: 30
+  distanciaRaycast: 200
   colorRaycast: {r: 1, g: 0, b: 0, a: 1}
   lineRenderer: {fileID: 1784635279836246396}
   teclaInteraccion: e

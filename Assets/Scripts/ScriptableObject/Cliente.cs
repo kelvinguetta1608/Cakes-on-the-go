@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement;
 
 public class Cliente : MonoBehaviour
 {
@@ -71,36 +73,63 @@ public class Cliente : MonoBehaviour
             if (other.CompareTag("Player"))
             {
                 interactAction = playerInputActions.Player.Interact;
+                if (interactAction.triggered)
+                {
+                    MotoController motoController = other.GetComponent<MotoController>();
+                    if (motoController != null && motoController.pedidoAsignado != null)
+                    {
+                        if (VerificarPedido(motoController.pedidoAsignado))
+                        {
+                            Debug.Log("Pedido entregado correctamente.");
+                            motoController.pedidoAsignado = null;
+                            SceneManager.LoadScene("Win1");
+
+                            // Llamada al GeneradorDePedidos para continuar el flujo
+                            if (generadorDePedidos != null)
+                            {
+                                generadorDePedidos.PedidoEntregado();
+                            }
+
+                            PedidoEntregado();
+                        }
+                        else
+                        {
+                            Debug.Log("Pedido incorrecto.");
+                        }
+                    }
+                }
             }
             else if (other.CompareTag("Player2"))
             {
                 interactAction = playerInputActions.Player2.Interact;
-            }
-
-            if (interactAction.triggered)
-            {
-                MotoController motoController = other.GetComponent<MotoController>();
-                if (motoController != null && motoController.pedidoAsignado != null)
+                if (interactAction.triggered)
                 {
-                    if (VerificarPedido(motoController.pedidoAsignado))
+                    MotoController motoController = other.GetComponent<MotoController>();
+                    if (motoController != null && motoController.pedidoAsignado != null)
                     {
-                        Debug.Log("Pedido entregado correctamente.");
-                        motoController.pedidoAsignado = null;
-
-                        // Llamada al GeneradorDePedidos para continuar el flujo
-                        if (generadorDePedidos != null)
+                        if (VerificarPedido(motoController.pedidoAsignado))
                         {
-                            generadorDePedidos.PedidoEntregado();
-                        }
+                            Debug.Log("Pedido entregado correctamente.");
+                            motoController.pedidoAsignado = null;
+                            SceneManager.LoadScene("Win2");
 
-                        PedidoEntregado();
-                    }
-                    else
-                    {
-                        Debug.Log("Pedido incorrecto.");
+                            // Llamada al GeneradorDePedidos para continuar el flujo
+                            if (generadorDePedidos != null)
+                            {
+                                generadorDePedidos.PedidoEntregado();
+                            }
+
+                            PedidoEntregado();
+                        }
+                        else
+                        {
+                            Debug.Log("Pedido incorrecto.");
+                        }
                     }
                 }
             }
+
+            
         }
     }
 
